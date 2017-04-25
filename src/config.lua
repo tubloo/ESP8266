@@ -8,7 +8,7 @@ module.MQTT_Host = ""
 module.MQTT_Port = 0  
 module.MQTT_ID = node.chipid()
 module.MQTT_NodeTopic = "home/nodemcu/"  
-module.MQTT_SensorTopic = "home/bathroom/"  
+module.MQTT_SensorTopic = "home/livingroom/"  
 
 module.Node_Interval = 5000
 module.Sensor_Interval = 10000

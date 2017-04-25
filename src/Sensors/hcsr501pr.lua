@@ -3,26 +3,27 @@ local module = {}
 inpin = 6
 
 start= tmr.time()
-lastEnd = 0
+tmrNbr = 0
 
 function motionStart()
-  sendData("1")
   start=tmr.time()
-  print('Motion detected!')
---  print('[DEBUG] start: '..start..', last: '..lastEnd..
---    ', break: '..start - lastEnd)
---  sendData("1")
-  tmr.delay(2000)
+  print('Motion Started!')
+  
+  sendData("1")
+  tmr.stop(tmrNbr)
+  tmr.alarm(tmrNbr,1000, 1, 
+    function()
+      sendData("1")
+    end)
+    
   gpio.trig(inpin, "down", motionStop)
 end
 
 function motionStop()
+  tmr.stop(tmrNbr)
+  sendData("0")
   duration = tmr.time() - start
---  print('motion ended after '..duration..' seconds.')
---  print('[DEBUG] start: '..start..', duration: '..duration)
---  sendData("0")
-  tmr.delay(2000)
-  lastEnd=start + duration
+  print('Motion ended after '..duration..' seconds.')
   gpio.trig(inpin, "up", motionStart)
 end
 
@@ -34,8 +35,8 @@ end
 
 
 function module.start(tmrNumber, tmrInterval)  
-
   print("hcsr start")
+  tmrNbr = tmrNumber
   gpio.mode(inpin, gpio.INT)
   gpio.trig(inpin, "up", motionStart)
 

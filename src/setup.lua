@@ -1,10 +1,9 @@
 local module = {}
 
 local function wifi_wait_ip()
-  if wifi.sta.getip()== nil then
-    print("IP unavailable, Waiting...")
-  else
-    tmr.stop(1)
+ 
+ 	wifi.sta.autoconnect(1)
+ 	
     print("\n====================================")
     print("ESP8266 mode is: " .. wifi.getmode())
     print("MAC address is: " .. wifi.ap.getmac())
@@ -13,7 +12,6 @@ local function wifi_wait_ip()
 
     Initialize()
 
-  end
 end
 
 function Initialize()
@@ -54,10 +52,13 @@ local function wifi_start(list_aps)
         wifi.sta.config(key,config.SSID[key])
         wifi.sta.connect()
         print("Connecting to " .. key .. " ...")
-        --config.SSID = nil  -- can save memory
-        tmr.stop(1)
-        tmr.alarm(1, 2500, 1, wifi_wait_ip)
+        
+        wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, wifi_wait_ip)
+        
         foundWiFi = true
+      	
+      	break
+      	
       end
 
     end
